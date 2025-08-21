@@ -56,7 +56,7 @@ jobs:
             path: coverage
             retention-days: 5 
 
-       docker:
+    docker:
            runs-on: ubuntu-latest
            needs:
            - code-coverage
@@ -73,5 +73,6 @@ jobs:
               context: .
               push: true
               tags: 'ghcr.io/${{ github.repository_owner }}/solar-system:${{ github.sha }}'
+
 
 
