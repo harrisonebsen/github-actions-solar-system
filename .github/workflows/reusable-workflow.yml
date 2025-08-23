@@ -1,0 +1,23 @@
+name: Caller Workflow
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dev-deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      APP_INGRESS_URL: ${{ steps.set-output.outputs.url }}
+    steps:
+      - name: Simulate Deployment
+        run: echo "https://my-app.example.com" > url.txt
+
+      - id: set-output
+        run: echo "url=$(cat url.txt)" >> $GITHUB_OUTPUT
+
+  call-reusable:
+    needs: dev-deploy
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      ingress-url: ${{ needs.dev-deploy.outputs.APP_INGRESS_URL }}
