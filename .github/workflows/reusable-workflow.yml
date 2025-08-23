@@ -1,6 +1,6 @@
 name: Testing - Reusable Workflow
 
-on: 
+on:
   workflow_call:
     inputs:
       ingress-url:
@@ -12,24 +12,7 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Check service health
-        env:
+      - env:
           URL: ${{ inputs.ingress-url }}
         run: |
-          echo "Checking service at: https://$URL/live"
-
-          # Get response (avoid failure if curl itself errors out)
-          response=$(curl -s -k https://$URL/live || echo "")
-          echo "Raw response: $response"
-
-          # Extract status safely
-          status=$(echo "$response" | jq -r .status 2>/dev/null || echo "unknown")
-          echo "Parsed status: $status"
-
-          # Validate
-          if [ "$status" != "live" ]; then
-            echo "❌ Service is not live (expected 'live', got '$status')"
-            exit 1
-          fi
-
-          echo "✅ Service is live!"
+          curl https://$URL/live -s -k | jq -r .status | grep -i live
